@@ -8,7 +8,7 @@ class Config:
     BASE_DIR = os.path.dirname(__file__)
     DATA_PATH = os.path.join(BASE_DIR, "data.xlsx")
 
-    LOG_PATH = os.path.join(BASE_DIR, "modeling_log.txt")
+    LOG_PATH = os.path.join(BASE_DIR, "log.txt")
 
     # CSV 输出根目录
     CSV_OUTPUT_DIR = os.path.join(os.path.dirname(__file__), 'csv_output')
@@ -62,7 +62,7 @@ class Config:
     CO_ROLLING_WINDOWS = [10, 20]        # 滚动窗口大小（用于均值、标准差）
     CO_WINDOW_STATS = 20                 # 用于工况切换的滑动窗口
     CO_TEMP_FANS = [13, 14, 18]          # 关键风箱（温度特征）
-    CO_THRESHOLD = 3500                  # 高/低CO阶段阈值
+    CO_THRESHOLD = 2800                  # 高/低CO阶段阈值,3500
     CO_MODEL_PARAMS = {
         'n_estimators': 800, 'max_depth': 12, 'learning_rate': 0.05,
         'num_leaves': 60, 'subsample': 0.8, 'colsample_bytree': 0.8,
@@ -71,10 +71,10 @@ class Config:
     }
     
     # ---------- 问题三：优化超参数 ----------
-    OPT_MAXITER = 50       # 差分进化最大迭代次数
-    OPT_POPSIZE = 20       # 种群大小
-    OPT_SEED = 42          # 随机种子
+    OPT_MAXITER = 100       # 差分进化最大迭代次数50
+    OPT_POPSIZE = 50       # 种群大小20
+    OPT_SEED = 42          # 随机种子42
     OPT_WORKERS = 1        # 进程数（1避免Windows多进程错误）
     
     # ---------- 其他 ----------
-    TRAIN_SPLIT = 0.8      # 训练集比例（按时间顺序前80%）
+    TRAIN_SPLIT = 0.7      # 训练集比例（按时间顺序前70%）

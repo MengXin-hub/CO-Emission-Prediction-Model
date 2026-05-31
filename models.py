@@ -37,7 +37,7 @@ def train_fan_models(df, cfg=None):
     train_size = int(cfg.TRAIN_SPLIT * len(df))
     train = df.iloc[:train_size].copy()
     test = df.iloc[train_size:].copy()
-    print(f"训练集样本数: {len(train)}，测试集样本数: {len(test)}")
+    # print(f"训练集样本数: {len(train)}，测试集样本数: {len(test)}")
     
     # 超参数
     N_LAGS = cfg.FAN_N_LAGS
@@ -227,12 +227,12 @@ def train_fan_models(df, cfg=None):
         rmse_list.append(rmse)
         r2_list.append(r2)
         
-        print(f"{i}#风箱: MAE={mae:.2f}°C, RMSE={rmse:.2f}°C, R²={r2:.4f}")
+        # print(f"{i}#风箱: MAE={mae:.2f}°C, RMSE={rmse:.2f}°C, R²={r2:.4f}")
     
-    print("========== 问题1整体平均性能 ==========")
-    print(f"平均MAE: {np.mean(mae_list):.2f} °C")
-    print(f"平均RMSE: {np.mean(rmse_list):.2f} °C")
-    print(f"平均R²: {np.mean(r2_list):.4f}")
+    # print("========== 问题1整体平均性能 ==========")
+    # print(f"平均MAE: {np.mean(mae_list):.2f} °C")
+    # print(f"平均RMSE: {np.mean(rmse_list):.2f} °C")
+    # print(f"平均R²: {np.mean(r2_list):.4f}")
     
     return {
         'models': models,
@@ -274,7 +274,7 @@ def train_co_models(df, cfg=None):
     df_co = df.copy()
     target = '烧结大烟道外排CO浓度'
     
-    # ----- 特征构造（与pass3.py一致）-----
+    # ----- 特征构造 -----
     # CO自身滞后
     for lag in cfg.CO_AR_LAGS:
         df_co[f'{target}_lag{lag}'] = df_co[target].shift(lag)
@@ -295,8 +295,8 @@ def train_co_models(df, cfg=None):
     df_co['机速'] = df_co['烧结机机速L1设定']
     
     df_co = df_co.dropna().reset_index(drop=True)
-    print("========== 问题2：CO浓度预测 ==========")
-    print(f"特征构造后数据量: {len(df_co)}")
+    # print("========== 问题2：CO浓度预测 ==========")
+    # print(f"特征构造后数据量: {len(df_co)}")
     
     # 划分训练集
     train_size = int(cfg.TRAIN_SPLIT * len(df_co))
@@ -305,11 +305,11 @@ def train_co_models(df, cfg=None):
     mean_values = train_data['CO_ma30'].dropna().values
     diff_means = np.diff(mean_values)
     split_idx = np.argmin(diff_means) + cfg.CO_WINDOW_STATS
-    print(f"训练集内工况切换点索引: {split_idx}")
+    # print(f"训练集内工况切换点索引: {split_idx}")
     
     train_high = train_data.iloc[:split_idx].copy()
     train_low = train_data.iloc[split_idx:].copy()
-    print(f"高CO阶段样本数: {len(train_high)}, 低CO阶段样本数: {len(train_low)}")
+    # print(f"高CO阶段样本数: {len(train_high)}, 低CO阶段样本数: {len(train_low)}")
     
     features = [c for c in df_co.columns if c not in [target, '序列']]
     
@@ -347,10 +347,10 @@ def train_co_models(df, cfg=None):
     mae = mean_absolute_error(y_test, y_pred)
     r2 = r2_score(y_test, y_pred)
     rmse = np.sqrt(mean_squared_error(y_test, y_pred))
-    print("========== 问题2：CO浓度预测 ==========")
-    print(f"MAE: {mae:.2f} mg/m³")
-    print(f"RMSE: {rmse:.2f} mg/m³")
-    print(f"R²: {r2:.4f}")
+    # print("========== 问题2：CO浓度预测 ==========")
+    # print(f"MAE: {mae:.2f} mg/m³")
+    # print(f"RMSE: {rmse:.2f} mg/m³")
+    # print(f"R²: {r2:.4f}")
     
     return {
         'model_high': model_high,

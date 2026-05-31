@@ -27,9 +27,9 @@ def main():
     print(f"数据加载完成，共 {len(df)} 行")
     
     # 3. 问题一：风箱温度预测
-    print("\n" + "="*60)
-    print("问题一：风箱温度预测")
-    print("="*60)
+    # print("\n" + "="*60)
+    # print("问题一：风箱温度预测")
+    # print("="*60)
     fan_results = train_fan_models(df, cfg)
     # 获取测试集实际有效样本数（预测值长度）
     n_valid_test = len(fan_results['y_tests'][0])
@@ -56,9 +56,9 @@ def main():
     log_model_results(logger, '问题一整体性能', avg_metrics)
     
     # 4. 问题二：CO浓度预测（分阶段建模）
-    print("\n" + "="*60)
-    print("问题二：CO浓度预测")
-    print("="*60)
+    # print("\n" + "="*60)
+    # print("问题二：CO浓度预测")
+    # print("="*60)
     co_results = train_co_models(df, cfg)
     # 1. 多变量影响曲线（使用原始数据）
     plot_co_influence_curves(df, co_results, save_path=None, csv_dir=csv_dir)
@@ -81,9 +81,9 @@ def main():
     logger.info(f"高CO阶段样本数 = {len(co_results['train_high'])}, 低CO阶段样本数 = {len(co_results['train_low'])}")
    
     # 5. 问题三：风箱负压优化（基于高CO阶段模型）
-    print("\n" + "="*60)
-    print("问题三：风箱负压优化")
-    print("="*60)
+    # print("\n" + "="*60)
+    # print("问题三：风箱负压优化")
+    # print("="*60)
     opt_results = optimize_pressure(
         model=co_results['model_high'],
         scaler=co_results['scaler_high'],
