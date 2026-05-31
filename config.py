@@ -64,15 +64,15 @@ class Config:
     CO_TEMP_FANS = [13, 14, 18]          # 关键风箱（温度特征）
     CO_THRESHOLD = 2800                  # 高/低CO阶段阈值,3500
     CO_MODEL_PARAMS = {
-        'n_estimators': 800, 'max_depth': 12, 'learning_rate': 0.05,
+        'n_estimators': 1200, 'max_depth': 12, 'learning_rate': 0.05,
         'num_leaves': 60, 'subsample': 0.8, 'colsample_bytree': 0.8,
         'reg_lambda': 0.01, 'reg_alpha': 0.01, 'min_child_samples': 5,
         'random_state': 42, 'n_jobs': -1, 'verbosity': -1
     }
     
     # ---------- 问题三：优化超参数 ----------
-    OPT_MAXITER = 100       # 差分进化最大迭代次数50
-    OPT_POPSIZE = 50       # 种群大小20
+    OPT_MAXITER = 200       # 差分进化最大迭代次数200
+    OPT_POPSIZE = 80       # 种群大小80
     OPT_SEED = 42          # 随机种子42
     OPT_WORKERS = 1        # 进程数（1避免Windows多进程错误）
     
