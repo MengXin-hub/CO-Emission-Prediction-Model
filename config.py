@@ -13,9 +13,9 @@ class Config:
     # CSV 输出根目录
     CSV_OUTPUT_DIR = os.path.join(os.path.dirname(__file__), 'csv_output')
     
-    # 各主题对应的 CSV 文件名（相对路径）
+    # 各主题对应的 CSV 文件名
     CSV_FILES = {
-        'fan_pressure_temp': 'fan_{fan}_pressure_temp.csv',        # 每个风箱一个文件
+        'fan_pressure_temp': 'fan_{fan}_pressure_temp.csv',
         'overall_prediction': 'overall_prediction.csv',
         'co_influence': 'co_influence.csv',
         'pressure_co_response': 'pressure_co_response_fan{fan}.csv',
@@ -37,16 +37,10 @@ class Config:
     FAN_GLOBAL_LAGS = [10, 20, 30]  # 大烟道参数滞后步数
 
     # 不同风箱段的LightGBM参数
-    FAN_PARAMS_STABLE = {  # 稳定区（1-10风箱除5风箱）
+    FAN_PARAMS_STABLE = {  # 稳定区（1-10风箱）
         'n_estimators': 500, 'max_depth': 12, 'learning_rate': 0.05,
         'num_leaves': 40, 'subsample': 0.8, 'colsample_bytree': 0.8,
         'reg_lambda': 0.1, 'reg_alpha': 0.1, 'min_child_samples': 5,
-        'random_state': 42, 'n_jobs': -1, 'verbosity': -1
-    }
-    FAN_PARAMS_5 = {  # 5风箱特殊参数
-        'n_estimators': 800, 'max_depth': 14, 'learning_rate': 0.03,
-        'num_leaves': 70, 'subsample': 0.7, 'colsample_bytree': 0.7,
-        'reg_lambda': 1.0, 'reg_alpha': 0.5, 'min_child_samples': 10,
         'random_state': 42, 'n_jobs': -1, 'verbosity': -1
     }
     FAN_PARAMS_TAIL = {  # 尾部风箱（11-18）
@@ -55,25 +49,13 @@ class Config:
         'reg_lambda': 0.5, 'reg_alpha': 0.2, 'min_child_samples': 5,
         'random_state': 42, 'n_jobs': -1, 'verbosity': -1
     }
-    # FAN_PARAMS_1 = {  # 1#风箱特殊参数（更大容量，更低正则化）
-    #     'n_estimators': 800,
-    #     'max_depth': 10,
-    #     'learning_rate': 0.05,
-    #     'subsample': 0.8,
-    #     'colsample_bytree': 0.8,
-    #     'reg_lambda': 0.1,
-    #     'reg_alpha': 0.1,
-    #     'random_state': 42,
-    #     'n_jobs': -1,
-    #     'verbosity': 0
-    # }
 
     # ---------- 问题二：CO浓度预测超参数 ----------
     CO_AR_LAGS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 20, 25, 30,
                   40, 50, 60, 80, 100, 120, 150, 180, 200]   # CO自身滞后
     CO_ROLLING_WINDOWS = [10, 20]        # 滚动窗口大小（用于均值、标准差）
     CO_WINDOW_STATS = 20                 # 用于工况切换的滑动窗口
-    CO_TEMP_FANS = [13, 14, 18]          # 关键风箱（温度特征）
+    CO_TEMP_FANS = [13, 14, 18]          # 关键风箱温度特征
     CO_THRESHOLD = 2800                  # 高/低CO阶段阈值
     CO_MODEL_PARAMS = {
         'n_estimators': 1500, 'max_depth': 12, 'learning_rate': 0.05,
@@ -83,10 +65,10 @@ class Config:
     }
     
     # ---------- 问题三：优化超参数 ----------
-    OPT_MAXITER = 1300       # 差分进化最大迭代次数
+    OPT_MAXITER = 300       # 差分进化最大迭代次数
     OPT_POPSIZE = 400       # 种群大小
     OPT_SEED = 174          # 随机种子
-    OPT_WORKERS = 1        # 进程数（1避免Windows多进程错误）
+    OPT_WORKERS = 1        # 进程数
     
     # ---------- 其他 ----------
     TRAIN_SPLIT = 0.4      # 训练集比例（按时间顺序前40%）

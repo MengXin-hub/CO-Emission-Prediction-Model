@@ -36,7 +36,7 @@ def main():
     # 原始测试集索引（前 train_size 之后的所有索引）
     train_size = int(cfg.TRAIN_SPLIT * len(df))
     full_test_indices = df.index[train_size:].to_numpy()
-    # 截取最后 n_valid_test 个索引（因为 dropna 删除了前面的缺失行）
+    # 截取最后 n_valid_test 个索引
     valid_test_indices = full_test_indices[-n_valid_test:]
     # 绘制每个风箱的负压-温度曲线
     plot_fan_pressure_temp_curves(df, fan_results, valid_test_indices, save_path=None, csv_dir=csv_dir)
@@ -62,8 +62,8 @@ def main():
     co_results = train_co_models(df, cfg)
     # 1. 多变量影响曲线（使用原始数据）
     plot_co_influence_curves(df, co_results, save_path=None, csv_dir=csv_dir)
-    # 2. 重点风箱负压对CO的影响（例如5#、12#、18#风箱）
-    for fan in [5, 12, 18]:
+    # 2. 重点风箱负压对CO的影响（例如5#、18#风箱）
+    for fan in [5, 18]:
         plot_pressure_co_response(co_results['model_high'], co_results['scaler_high'], 
                                 co_results['features'], co_results['train_high'], 
                                 df, fan, save_path=None, csv_dir=csv_dir)

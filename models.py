@@ -38,7 +38,7 @@ def train_fan_models(df, cfg=None):
     train_size = int(cfg.TRAIN_SPLIT * len(df))
     train = df.iloc[:train_size].copy()
     test = df.iloc[train_size:].copy()
-    # print(f"训练集样本数: {len(train)}，测试集样本数: {len(test)}")
+    print(f"训练集样本数: {len(train)}，测试集样本数: {len(test)}")
     
     # 超参数
     N_LAGS = cfg.FAN_N_LAGS
@@ -57,7 +57,7 @@ def train_fan_models(df, cfg=None):
         pressure_col = f'{i}#风箱负压'
         target_col = f'{i}#风箱温度'
         
-        # ----- 特征构造（与pass3.py保持一致）-----
+        # ----- 特征构造 -----
         # 自身滞后特征
         lag_cols = [f'{pressure_col}_lag{l}' for l in range(1, N_LAGS+1)]
         # 相邻风箱负压（当前）
@@ -117,7 +117,7 @@ def train_fan_models(df, cfg=None):
             self_temp_lag = [f'{target_col}_lag{t}' for t in range(1, 11)]
             feature_cols += self_temp_lag
         
-        # 构造滞后特征（临时对象，仅用于当前风箱）
+        # 构造滞后特征
         # 1. 自身负压滞后
         lag_train = pd.DataFrame({col: train[pressure_col].shift(l) for l, col in zip(range(1, N_LAGS+1), lag_cols)})
         train_temp = pd.concat([train, lag_train], axis=1)
@@ -203,15 +203,10 @@ def train_fan_models(df, cfg=None):
         X_test = scaler.transform(X_test)
         
         # 选择参数
-        if i == 5:
-            params = cfg.FAN_PARAMS_5
-        # elif i == 1:
-        #     params = cfg.FAN_PARAMS_1
-        elif i >= 10:
-            params = cfg.FAN_PARAMS_TAIL
-        else:
+        if i < 10:
             params = cfg.FAN_PARAMS_STABLE
-        
+        else:
+            params = cfg.FAN_PARAMS_TAIL
         model = lgb.LGBMRegressor(**params)
         model.fit(X_train, y_train)
         models.append(model)

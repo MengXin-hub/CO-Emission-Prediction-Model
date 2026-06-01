@@ -9,7 +9,7 @@ def setup_logger(log_file='modeling_log.txt', level=logging.INFO):
     """
     配置日志：同时输出到控制台和文件
     """
-    # 清除已有的 handlers（避免重复）
+    # 清除已有的 handlers
     root = logging.getLogger()
     if root.handlers:
         for handler in root.handlers:

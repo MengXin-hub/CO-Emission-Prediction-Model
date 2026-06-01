@@ -47,7 +47,7 @@ def add_rolling_stats(df, col, windows, stats, min_periods=1):
     Returns
     -------
     pd.DataFrame
-        添加统计特征后的DataFrame（原地修改）
+        添加统计特征后的DataFrame
     """
     for w in windows:
         rolling = df[col].rolling(window=w, min_periods=min_periods)
@@ -130,7 +130,7 @@ def build_fan_features_for_one_fan(fan_idx, train, test, cfg):
     # 自身滞后特征
     lag_cols = [f'{pressure_col}_lag{l}' for l in range(1, N_LAGS+1)]
     
-    # 相邻风箱负压（当前）
+    # 相邻风箱负压
     neighbor_pressure = []
     for d in range(-NEIGHBORS, NEIGHBORS+1):
         if d == 0: continue
@@ -138,7 +138,7 @@ def build_fan_features_for_one_fan(fan_idx, train, test, cfg):
         if 1 <= nf <= 18:
             neighbor_pressure.append(f'{nf}#风箱负压')
     
-    # 相邻风箱温度（当前）
+    # 相邻风箱温度
     neighbor_temp = []
     for d in range(-NEIGHBORS, NEIGHBORS+1):
         if d == 0: continue
@@ -190,7 +190,7 @@ def build_fan_features_for_one_fan(fan_idx, train, test, cfg):
         self_temp_lag = [f'{target_col}_lag{t}' for t in range(1, 11)]
         feature_cols += self_temp_lag
     
-    # ----- 构造所有滞后特征（临时副本，避免污染原数据）-----
+    # ----- 构造所有滞后特征 -----
     train_temp = train.copy()
     test_temp = test.copy()
     
@@ -234,7 +234,7 @@ def build_fan_features_for_one_fan(fan_idx, train, test, cfg):
         train_temp[f'{pressure_col}_window{WINDOW}_{stat}'] = vals_train
         test_temp[f'{pressure_col}_window{WINDOW}_{stat}'] = vals_test
     
-    # 5. 自身温度滞后（仅对5#和尾部）
+    # 5. 自身温度滞后
     if fan_idx == 5 or fan_idx >= 11:
         max_lag = 20 if fan_idx >= 11 else 10
         for t in range(1, max_lag+1):
@@ -242,7 +242,7 @@ def build_fan_features_for_one_fan(fan_idx, train, test, cfg):
             train_temp[col] = train_temp[target_col].shift(t)
             test_temp[col] = test_temp[target_col].shift(t)
     
-    # 6. 上游温度滞后（仅对5#和尾部）
+    # 6. 上游温度滞后
     if fan_idx == 5:
         for u in [3,4]:
             for lag in [1,5,10]:
@@ -259,26 +259,7 @@ def build_fan_features_for_one_fan(fan_idx, train, test, cfg):
                     feature_cols.append(col)
                 train_temp[col] = train_temp[f'{u}#风箱温度'].shift(lag)
                 test_temp[col] = test_temp[f'{u}#风箱温度'].shift(lag)
-    
-    # 单独优化1#风箱：
-    if fan_idx == 1:
-        # 1. 增加点火区特有的上游信息（虽然没有上游风箱，但可增加机速与大烟道温度的长滞后）
-        speed_lags = [5, 10, 20, 30, 40, 50, 60]
-        for lag in speed_lags:
-            feature_cols.append(f'烧结机机速L1设定_lag{lag}')
-        stack_temp_lags = [10, 20, 30, 40, 50, 60]
-        for lag in stack_temp_lags:
-            feature_cols.append(f'1#大烟道温度_lag{lag}')
-            feature_cols.append(f'2#大烟道温度_lag{lag}')
-        # 2. 增加自身负压的更长期滞后（90步，180秒）
-        extra_lags = [61, 70, 80, 90]
-        for lag in extra_lags:
-            feature_cols.append(f'{pressure_col}_lag{lag}')
-        # 3. 增加自身负压的近期趋势（过去5步、10步的均值和斜率）
-        for w in [5, 10]:
-            feature_cols.append(f'{pressure_col}_win_mean_{w}')
-            feature_cols.append(f'{pressure_col}_win_slope_{w}')
-    
+
     # 删除缺失值
     train_clean = train_temp.dropna(subset=feature_cols).copy()
     test_clean = test_temp.dropna(subset=feature_cols).copy()
