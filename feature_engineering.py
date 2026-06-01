@@ -260,6 +260,25 @@ def build_fan_features_for_one_fan(fan_idx, train, test, cfg):
                 train_temp[col] = train_temp[f'{u}#风箱温度'].shift(lag)
                 test_temp[col] = test_temp[f'{u}#风箱温度'].shift(lag)
     
+    # 单独优化1#风箱：
+    if fan_idx == 1:
+        # 1. 增加点火区特有的上游信息（虽然没有上游风箱，但可增加机速与大烟道温度的长滞后）
+        speed_lags = [5, 10, 20, 30, 40, 50, 60]
+        for lag in speed_lags:
+            feature_cols.append(f'烧结机机速L1设定_lag{lag}')
+        stack_temp_lags = [10, 20, 30, 40, 50, 60]
+        for lag in stack_temp_lags:
+            feature_cols.append(f'1#大烟道温度_lag{lag}')
+            feature_cols.append(f'2#大烟道温度_lag{lag}')
+        # 2. 增加自身负压的更长期滞后（90步，180秒）
+        extra_lags = [61, 70, 80, 90]
+        for lag in extra_lags:
+            feature_cols.append(f'{pressure_col}_lag{lag}')
+        # 3. 增加自身负压的近期趋势（过去5步、10步的均值和斜率）
+        for w in [5, 10]:
+            feature_cols.append(f'{pressure_col}_win_mean_{w}')
+            feature_cols.append(f'{pressure_col}_win_slope_{w}')
+    
     # 删除缺失值
     train_clean = train_temp.dropna(subset=feature_cols).copy()
     test_clean = test_temp.dropna(subset=feature_cols).copy()

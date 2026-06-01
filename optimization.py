@@ -2,7 +2,6 @@
 optimization.py - 优化模块
 """
 import numpy as np
-import matplotlib.pyplot as plt
 from scipy.optimize import differential_evolution
 from config import Config
 

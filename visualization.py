@@ -233,7 +233,7 @@ def plot_co_prediction_curve(y_true, y_pred, split_point=None, save_path=None, c
     plt.figure(figsize=(14, 6))
     plt.plot(y_true, color='gold', linewidth=1.5, label='实际CO浓度')
     plt.plot(y_pred, color='red', linewidth=1.5, label='预测CO浓度')
-    if split_point is not None:
+    if split_point is not None:  # 绘制分割线
         plt.axvline(x=split_point, color='gray', linestyle='--', alpha=0.7)
     plt.xlabel('测试样本序号')
     plt.ylabel('CO浓度 (mg/$m^3$)')
@@ -276,6 +276,7 @@ def plot_co_reduction_comparison(baseline_co, optimal_co, save_path=None, csv_di
     plt.grid(axis='y', linestyle='--', alpha=0.6)
     if save_path:
         plt.savefig(save_path, dpi=300, bbox_inches='tight')
+    plt.xlim(-0.5, 1.5) 
     plt.show()
 
 
